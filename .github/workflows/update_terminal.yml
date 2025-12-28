@@ -15,7 +15,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: '3.10' # Updated from 3.9 to 3.10 to fix StaticMethod error
 
       - name: Install System Dependencies
         run: |
@@ -24,17 +24,15 @@ jobs:
 
       - name: Install Python Dependencies
         run: |
+          python -m pip install --upgrade pip
           python -m pip install --upgrade github-readme-terminal Pillow
-
-      - name: List Files (Debug)
-        run: ls -R # This helps us see if the file exists
 
       - name: Generate GIF
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mkdir -p frames
-          # Run the script (file must be named shrey_os_perfect_fit.py)
+          # Ensure the file name matches what you uploaded
           python shrey_os_perfect_fit.py
           # Compile with Anti-Flicker Filter
           ffmpeg -y -r 15 -i frames/frame_%d.png -filter_complex "[0:v] split [a][b];[a] palettegen [p];[b][p] paletteuse" output.gif
